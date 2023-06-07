@@ -58,6 +58,35 @@ def download_and_upload(update, context):
 
     os.remove(new_file_name)
 
+
+    # Rename the file
+
+    new_file_name = 'new_' + file_name
+
+    os.rename(file_name, new_file_name)
+
+    # Get the current value of upload_as_document flag
+
+    upload_as_document = context.user_data.get('upload_as_document', False)
+
+    # Upload the file to Telegram
+
+    if upload_as_document:
+
+        with open(new_file_name, 'rb') as file:
+
+            bot.send_document(chat_id=update.message.chat_id, document=file)
+
+    else:
+
+        with open(new_file_name, 'rb') as file:
+
+            bot.send_photo(chat_id=update.message.chat_id, photo=InputFile(file))
+
+    # Delete the temporary file
+
+    os.remove(new_file_name)
+
 def set_upload_as_document(update, context):
 
     # Get the choice from the message
